@@ -2,7 +2,7 @@ from flask import Blueprint, abort, make_response, request, Response
 from app.models.planet import Planet
 from ..db import db
 
-planets_bp = Blueprint("planet_bp", __name__, url_prefix="/planets")
+planets_bp = Blueprint("planet_bp", __name__, url_prefix="/planets/")
 
 @planets_bp.post("")
 def create_planet():
@@ -33,10 +33,16 @@ def create_planet():
 
 @planets_bp.get("")
 def get_all_planets():
-    query = db.select(Planet).order_by(Planet.id)
+    query = db.select(Planet)
+
+    name_param = request.args.get("name")
+    if name_param:
+        query = query.where(Planet.name.ilike(f"%{name_param}%"))
+
+    query = query.order_by(Planet.id)
     planets = db.session.scalars(query)
     planets_response = []
-    
+
     for planet in planets:
         planets_response.append(
             {
@@ -49,7 +55,7 @@ def get_all_planets():
         )
     return planets_response
 
-@planets_bp.get("/<planet_id>")
+@planets_bp.get("<planet_id>")
 def get_one_planet(planet_id):
     planet = validate_planet(planet_id)
 
@@ -61,7 +67,7 @@ def get_one_planet(planet_id):
                 "diameter" : planet.diameter
             }
 
-@planets_bp.put("/<planet_id>")
+@planets_bp.put("<planet_id>")
 def update_planet(planet_id):
     planet = validate_planet(planet_id)
 
@@ -73,17 +79,20 @@ def update_planet(planet_id):
 
     db.session.commit()
 
-    response_body = {
-                "id" : planet.id,
-                "name" : planet.name,
-                "description" : planet.description,
-                "moons" : planet.moons,
-                "diameter" : planet.diameter
-            }
+    # response_body = {
+    #             "id" : planet.id,
+    #             "name" : planet.name,
+    #             "description" : planet.description,
+    #             "moons" : planet.moons,
+    #             "diameter" : planet.diameter
+    #         }
 
-    return make_response(response_body, 200, {"Content-Type": "application/json"})
+    # return make_response(response_body, 200, {"Content-Type": "application/json"})
 
-@planets_bp.delete("/<planet_id>")
+    return Response(status=204, mimetype="application/json")
+
+
+@planets_bp.delete("<planet_id>")
 def delete_planet(planet_id):
     planet = validate_planet(planet_id)
     db.session.delete(planet)
