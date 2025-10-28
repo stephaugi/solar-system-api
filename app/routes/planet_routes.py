@@ -1,4 +1,4 @@
-from flask import Blueprint, abort, make_response, request
+from flask import Blueprint, abort, make_response, request, Response
 from app.models.planet import Planet
 from ..db import db
 
@@ -36,6 +36,7 @@ def get_all_planets():
     query = db.select(Planet).order_by(Planet.id)
     planets = db.session.scalars(query)
     planets_response = []
+    
     for planet in planets:
         planets_response.append(
             {
@@ -59,6 +60,36 @@ def get_one_planet(planet_id):
                 "moons" : planet.moons,
                 "diameter" : planet.diameter
             }
+
+@planets_bp.put("/<planet_id>")
+def update_planet(planet_id):
+    planet = validate_planet(planet_id)
+
+    request_body = request.get_json()
+    planet.name = request_body["name"]
+    planet.description = request_body["description"]
+    planet.moons = request_body["moons"]
+    planet.diameter = request_body["diameter"]
+
+    db.session.commit()
+
+    response_body = {
+                "id" : planet.id,
+                "name" : planet.name,
+                "description" : planet.description,
+                "moons" : planet.moons,
+                "diameter" : planet.diameter
+            }
+
+    return make_response(response_body, 200, {"Content-Type": "application/json"})
+
+@planets_bp.delete("/<planet_id>")
+def delete_planet(planet_id):
+    planet = validate_planet(planet_id)
+    db.session.delete(planet)
+    db.session.commit()
+
+    return Response(status=204, mimetype="application/json")
 
 def validate_planet(planet_id):
     try:
