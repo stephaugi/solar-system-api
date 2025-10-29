@@ -39,6 +39,18 @@ def get_all_planets():
     if name_param:
         query = query.where(Planet.name.ilike(f"%{name_param}%"))
 
+    description_param = request.args.get("description")
+    if description_param:
+        query = query.where(Planet.description.ilike(f"%{description_param}%"))
+
+    max_param = request.args.get("max")
+    if max_param:
+        query = query.where(Planet.diameter <= max_param)
+
+    min_param = request.args.get("min")
+    if min_param:
+        query = query.where(Planet.diameter >= min_param)
+
     query = query.order_by(Planet.id)
     planets = db.session.scalars(query)
     planets_response = []
