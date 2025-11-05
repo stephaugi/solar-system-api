@@ -38,17 +38,36 @@ def get_all_moons():
 
     return [moon.to_dict() for moon in moons]
 
-@bp.post("/<planet_id>/moons")
-def create_moon_with_planet(planet_id):
-    planet = validate_model(Planet, planet_id)
+# @bp.post("/<planet_id>/moons")
+# def create_moon_with_planet(planet_id):
+#     planet = validate_model(Planet, planet_id)
+
+#     request_body = request.get_json()
+#     request_body["planet_id"] = planet.id
+#     return create_model(Moon, request_body)
+
+# @bp.get("/<planet_id>/moons")
+# def get_moons_by_planet(planet_id):
+#     planet = validate_model(Planet, planet_id)
+#     response = [moon.to_dict() for moon in planet.moons]
+#     return response
+
+@bp.put("<moon_id>")
+def update_moon(moon_id):
+    moon = validate_model(Moon, moon_id)
 
     request_body = request.get_json()
-    request_body["planet_id"] = planet.id
-    return create_model(Moon, request_body)
+    moon.size = request_body["size"]
+    moon.description = request_body["description"]
 
-@bp.get("/<planet_id>/moons")
-def get_moons_by_planet(planet_id):
-    planet = validate_model(Planet, planet_id)
-    response = [moon.to_dict() for moon in planet.moons]
-    return response
+    db.session.commit()
 
+    return Response(status=204, mimetype="application/json")
+
+@bp.delete("<moon_id>")
+def delete_moon(moon_id):
+    moon = validate_model(Moon, moon_id)
+    db.session.delete(moon)
+    db.session.commit()
+
+    return Response(status=204, mimetype="application/json")
