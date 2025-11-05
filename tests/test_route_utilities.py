@@ -8,7 +8,6 @@ def test_validate_model(client, two_saved_planets):
     # Assert
     assert planet.name == "Venus"
     assert planet.description== "A rocky planet with a thick, toxic atmosphere and surface temperatures hot enough to melt lead."
-    assert planet.moons == 0
     assert planet.diameter==12104
 
 # def test_validate_model_invalid_id(client, two_saved_planets):

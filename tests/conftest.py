@@ -34,8 +34,8 @@ def client(app):
 
 @pytest.fixture
 def two_saved_planets(app):
-    planet_Mercury = Planet(name="Mercury", description="The smallest and closest planet to the Sun with a rocky surface and no moons.", moons=0, diameter=4879)
-    planet_Venus = Planet(name="Venus", description="A rocky planet with a thick, toxic atmosphere and surface temperatures hot enough to melt lead.", moons=0, diameter=12104)
+    planet_Mercury = Planet(name="Mercury", description="The smallest and closest planet to the Sun with a rocky surface and no moons.", diameter=4879)
+    planet_Venus = Planet(name="Venus", description="A rocky planet with a thick, toxic atmosphere and surface temperatures hot enough to melt lead.", diameter=12104)
 
     db.session.add_all([planet_Mercury, planet_Venus])
     db.session.commit()

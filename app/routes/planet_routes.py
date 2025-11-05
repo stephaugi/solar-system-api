@@ -55,7 +55,6 @@ def update_planet(planet_id):
     request_body = request.get_json()
     planet.name = request_body["name"]
     planet.description = request_body["description"]
-    planet.moons = request_body["moons"]
     planet.diameter = request_body["diameter"]
 
     db.session.commit()

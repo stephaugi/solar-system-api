@@ -24,7 +24,6 @@ def test_to_dict():
     # Arrange
     new_planet = Planet(id=1, name="Mercury",
         description="The smallest and closest planet to the Sun with a rocky surface and no moons.",
-        moons=0,
         diameter=4879)
 
     # Act
@@ -35,9 +34,8 @@ def test_to_dict():
         "id":1,
         "name":"Mercury",
         "description":"The smallest and closest planet to the Sun with a rocky surface and no moons.",
-        "moons": 0,
         "diameter": 4879
         }
-    assert len(response_dict)==5
+    assert len(response_dict)==4
 
 
